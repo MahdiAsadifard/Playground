@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="MouseMover/MouseMover.csproj" />
+  <Project Path="MouseMoverAppTray/MouseMoverAppTray.csproj" Id="ae4f083a-d79b-4dad-a648-a79a6b773e92" />
 </Solution>
