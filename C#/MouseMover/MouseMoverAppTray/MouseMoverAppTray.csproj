@@ -19,6 +19,9 @@
     <None Update="Icons\exit.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Icons\settings.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Icons\start.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
