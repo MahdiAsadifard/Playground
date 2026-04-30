@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 const API_BASE_URL = 'http://localhost:3333/api/weather'
 
-const clampDays = (days) => Math.min(5, Math.max(1, Number(days) || 1))
+const clampDays = (days) => Math.max(1, Number(days) || 1)
 
 const formatNumber = (value) => {
   const numericValue = Number(value)
@@ -91,7 +91,7 @@ function normalizeWeatherResponse(response) {
   }
 }
 
-export default function useWeather(city, days) {
+export default function useWeather(city, days, state, country) {
   const [data, setData] = useState({ location: { name: '', country: '' }, days: [] })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -108,6 +108,8 @@ export default function useWeather(city, days) {
           city: city?.trim() || 'Toronto',
           days: String(clampDays(days)),
         })
+        if (state?.trim()) query.set('state', state.trim())
+        if (country?.trim()) query.set('country', country.trim())
 
         const response = await fetch(`${API_BASE_URL}?${query.toString()}`, {
           signal: controller.signal,
@@ -136,7 +138,7 @@ export default function useWeather(city, days) {
     fetchWeather()
 
     return () => controller.abort()
-  }, [city, days])
+  }, [city, days, state, country])
 
   return { data, loading, error }
 }

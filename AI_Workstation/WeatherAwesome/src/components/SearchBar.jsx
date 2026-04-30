@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 
-const clampDays = (value) => Math.min(5, Math.max(1, Number(value) || 1))
+const clampDays = (value) => Math.max(1, Number(value) || 1)
 
-export default function SearchBar({ initialCity, initialDays, onSearch, disabled }) {
+export default function SearchBar({ initialCity, initialDays, initialState, initialCountry, onSearch, disabled }) {
   const [city, setCity] = useState(initialCity)
+  const [state, setState] = useState(initialState || '')
+  const [country, setCountry] = useState(initialCountry || '')
   const [days, setDays] = useState(initialDays)
 
   useEffect(() => {
@@ -14,9 +16,22 @@ export default function SearchBar({ initialCity, initialDays, onSearch, disabled
     setDays(initialDays)
   }, [initialDays])
 
+  useEffect(() => {
+    setState(initialState || '')
+  }, [initialState])
+
+  useEffect(() => {
+    setCountry(initialCountry || '')
+  }, [initialCountry])
+
   const handleSubmit = (event) => {
     event.preventDefault()
-    onSearch({ city: city.trim() || 'Toronto', days: clampDays(days) })
+    onSearch({
+      city: city.trim() || 'Toronto',
+      days: clampDays(days),
+      state: state.trim() || null,
+      country: country.trim() || null,
+    })
   }
 
   return (
@@ -32,7 +47,37 @@ export default function SearchBar({ initialCity, initialDays, onSearch, disabled
             type="text"
             value={city}
             onChange={(event) => setCity(event.target.value)}
-            placeholder="Search city in Ontario..."
+            placeholder="e.g. Toronto"
+            autoComplete="off"
+          />
+        </div>
+
+        <div className="field-group">
+          <label className="field-label" htmlFor="state-input">
+            State/Province
+          </label>
+          <input
+            id="state-input"
+            className="input-field"
+            type="text"
+            value={state}
+            onChange={(event) => setState(event.target.value)}
+            placeholder="e.g. ON (optional)"
+            autoComplete="off"
+          />
+        </div>
+
+        <div className="field-group">
+          <label className="field-label" htmlFor="country-input">
+            Country
+          </label>
+          <input
+            id="country-input"
+            className="input-field"
+            type="text"
+            value={country}
+            onChange={(event) => setCountry(event.target.value)}
+            placeholder="e.g. CA (optional)"
             autoComplete="off"
           />
         </div>
@@ -48,7 +93,6 @@ export default function SearchBar({ initialCity, initialDays, onSearch, disabled
             value={days}
             onChange={(event) => setDays(clampDays(event.target.value))}
             min="1"
-            max="5"
           />
         </div>
 

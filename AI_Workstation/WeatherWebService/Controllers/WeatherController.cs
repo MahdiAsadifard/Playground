@@ -21,30 +21,42 @@ public sealed class WeatherController : ControllerBase
     }
 
     /// <summary>
-    /// Retrieves weather forecast data for the specified Ontario city.
+    /// Retrieves weather forecast data for the specified city.
     /// </summary>
-    /// <param name="city">The Ontario city to query.</param>
+    /// <param name="city">The city to query.</param>
+    /// <param name="state">Optional state/province code (e.g., ON).</param>
+    /// <param name="country">Optional country code (e.g., CA).</param>
     /// <param name="days">The number of forecast days to return.</param>
     /// <returns>The requested weather forecast.</returns>
     [HttpGet(Name = "GetWeather")]
     [ProducesResponseType(typeof(WeatherResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<WeatherResponse>> GetWeather([FromQuery] string city = "Toronto", [FromQuery] int days = 5)
+    public async Task<ActionResult<WeatherResponse>> GetWeather(
+        [FromQuery] string city = "Toronto",
+        [FromQuery] string? state = null,
+        [FromQuery] string? country = null,
+        [FromQuery] int days = 5)
     {
         if (string.IsNullOrWhiteSpace(city))
         {
             return BadRequest("City is required.");
         }
 
-        if (days < 1 || days > 5)
+        if (days < 1)
         {
-            return BadRequest("Days must be between 1 and 5.");
+            return BadRequest("Days must be at least 1.");
         }
 
         try
         {
-            var scopedCity = $"{city.Trim()},ON,CA";
+            var queryParts = new List<string> { city.Trim() };
+            if (!string.IsNullOrWhiteSpace(state))
+                queryParts.Add(state.Trim());
+            if (!string.IsNullOrWhiteSpace(country))
+                queryParts.Add(country.Trim());
+
+            var scopedCity = string.Join(",", queryParts);
             var response = await _weatherService.GetWeatherAsync(scopedCity, days).ConfigureAwait(false);
 
             return Ok(response);

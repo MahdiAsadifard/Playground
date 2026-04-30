@@ -8,14 +8,18 @@ import useWeather from './hooks/useWeather'
 
 function WeatherApp() {
   const [city, setCity] = useState('Toronto')
+  const [state, setState] = useState('ON')
+  const [country, setCountry] = useState('CA')
   const [days, setDays] = useState(5)
-  const [query, setQuery] = useState({ city: 'Toronto', days: 5 })
-  const { data, loading, error } = useWeather(query.city, query.days)
+  const [query, setQuery] = useState({ city: 'Toronto', days: 5, state: 'ON', country: 'CA' })
+  const { data, loading, error } = useWeather(query.city, query.days, query.state, query.country)
 
-  const handleSearch = ({ city: nextCity, days: nextDays }) => {
+  const handleSearch = ({ city: nextCity, days: nextDays, state: nextState, country: nextCountry }) => {
     setCity(nextCity)
     setDays(nextDays)
-    setQuery({ city: nextCity, days: nextDays })
+    setState(nextState || '')
+    setCountry(nextCountry || '')
+    setQuery({ city: nextCity, days: nextDays, state: nextState, country: nextCountry })
   }
 
   const locationName = data?.location?.name || query.city
@@ -29,6 +33,8 @@ function WeatherApp() {
         <SearchBar
           initialCity={city}
           initialDays={days}
+          initialState={state}
+          initialCountry={country}
           onSearch={handleSearch}
           disabled={loading}
         />
