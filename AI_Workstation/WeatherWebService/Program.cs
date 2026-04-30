@@ -1,9 +1,12 @@
+using WeatherWebService.Models;
 using WeatherWebService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.Configure<OpenWeatherMapOptions>(
+    builder.Configuration.GetSection(OpenWeatherMapOptions.SectionName));
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
