@@ -1,0 +1,16 @@
+services:
+  weather-api:
+    build:
+      context: ./WeatherWebService
+    ports:
+      - "3333:3333"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  weather-frontend:
+    build:
+      context: ./WeatherAwesome
+    ports:
+      - "4444:4444"
+    depends_on:
+      - weather-api
